@@ -1,0 +1,76 @@
+https://api-docs.render.com/reference/list-postgres
+
+==========
+Rate Limit
+==========
+curl -i --request GET \
+     --url 'https://api.render.com/v1/services?limit=1' \
+     --header "Authorization: Bearer $RENDER_API_TOKEN"
+Example:
+> HTTP/1.1 200 OK
+> Content-Type: application/json; charset=utf-8
+> Ratelimit-Limit: 100
+> Ratelimit-Remaining: 99
+> Ratelimit-Reset: 45
+
+Explanation:
+Allowed requests:
+> Ratelimit-Limit: 100
+Available requests:
+> Ratelimit-Remaining: 99
+Seconds until request limit reset:
+> Ratelimit-Reset: 45
+
+
+==========
+List PostgresSQL instances
+==========
+curl --request GET \
+     --url 'https://api.render.com/v1/postgres?includeReplicas=true&limit=20' \
+     --header 'accept: application/json' \
+     --header "Authorization: Bearer $RENDER_API_TOKEN"
+
+
+==========
+Create PostgreSQL
+==========
+curl --request POST \
+     --url https://api.render.com/v1/postgres \
+     --header 'accept: application/json' \
+     --header 'content-type: application/json' \
+     --header "Authorization: Bearer $RENDER_API_TOKEN" \
+     --data '{
+  "name": "render-deploy",
+  "ownerId": "$OWNER_ID",
+  "databaseName": "render_deploy",
+  "databaseUser": "render_user",
+  "enableHighAvailability": false,
+  "plan": "free",
+  "version": "16"
+}'
+
+
+curl --request POST \
+     --url https://api.render.com/v1/postgres \
+     --header 'accept: application/json' \
+     --header 'content-type: application/json' \
+     --header "Authorization: Bearer $RENDER_API_TOKEN" \
+     --data "{
+  \"name\": \"render-deploy\",
+  \"ownerId\": \"$OWNER_ID\",
+  \"databaseName\": \"render_deploy\",
+  \"databaseUser\": \"render_user\",
+  \"enableHighAvailability\": false,
+  \"plan\": \"free\",
+  \"version\": \"16\"
+}"
+
+==========
+Delete PostgreSQL
+==========
+https://api.render.com/v1/postgres/{postgresId}
+
+curl --request DELETE \
+     --url https://api.render.com/v1/postgres/dpg-d0d8j63uibrs73bs5lq0-a\
+     --header 'accept: application/json' \
+     --header "Authorization: Bearer $RENDER_API_TOKEN"

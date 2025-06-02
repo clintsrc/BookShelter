@@ -1,0 +1,56 @@
+Problem (Free Tier limits):
+   * Free PostgreSQL instances now expire after 30 days (previously 90)
+    (ref: https://render.com/changelog/free-postgresql-instances-now-expire-after-30-days-previously-90)
+   * Only one Free Render Postgres database can be active for any given workspace.
+    (ref: https://render.com/docs/free)
+
+It would be best to automate as much as possible
+
+Proposal:
+Render provides blueprints to partially automate the deployments based on a yaml config in the repo source.
+- BookShelter blueprint: defines the postgres deployment and its app deployment
+  ## This will handle automatic secure binding from the app to the db
+  envVars:
+    - key: DB_URL
+      fromDatabase:
+        name: bookshelter-db
+        property: connectionString
+- InYourLane blueprint: defines its app deployment and includes the (new) database url:
+  envVars:
+    - key: DB_URL   # this is the render env already in place
+      sync: false
+
+* When it's time to recreate the deployments:
+  BookShelter:
+  - Delete the stale database
+  - Go to the blueprints page
+  - Manually run the BookShelter blueprint
+  - Test it out
+  InYourLane:
+  - Grab the db string (it should be set by the BookShelter blueprint and accessible
+    in the enviroment variables)
+  - Update the InYourLane DB_URL environment variable's connection string:
+    DB_URL = postgresql://render_deploy_42b8_user:<string>@<string>/kanban_db
+  - Manually run the InYourLane blueprint
+  - Test it out
+
+Here are helpful curl commands that can help:
+  - ==========
+    List PostgresSQL instances
+    ==========
+    curl --request GET \
+        --url 'https://api.render.com/v1/postgres?includeReplicas=true&limit=20' \
+        --header 'accept: application/json' \
+        --header "Authorization: Bearer $RENDER_API_TOKEN" | jq
+
+    ==========
+    Delete PostgreSQL
+    ==========
+    https://api.render.com/v1/postgres/{postgresId}
+
+    curl --request DELETE \
+        --url https://api.render.com/v1/postgres/dpg-d0d8j63uibrs73bs5lq0-a\
+        --header 'accept: application/json' \
+        --header "Authorization: Bearer $RENDER_API_TOKEN"
+
+

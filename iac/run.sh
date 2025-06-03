@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 # Source the variables: . run.sh
-export RENDER_API_TOKEN="rnd_uRvI4rAIb0nkz2zr5PAB83HgJBJ9"
-export OWNER_ID="tea-ct93ssl6l47c73amic00"
+export RENDER_API_TOKEN="<RENDER_API_TOKEN>"
+export OWNER_ID="<OWNER_ID>"
 export REGION="oregon"
 
 echo $RENDER_API_TOKEN
